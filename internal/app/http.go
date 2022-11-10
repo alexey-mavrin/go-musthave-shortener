@@ -6,6 +6,8 @@ import (
 	"path"
 )
 
+const serverAddress = "http://localhost:8080"
+
 func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
 	url := r.FormValue("url")
 	log.Print("url:", url)
@@ -14,7 +16,7 @@ func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	requestURL := path.Join(r.URL.String(), key)
+	requestURL := path.Join(serverAddress, key)
 	http.Error(w, requestURL, http.StatusCreated)
 }
 
