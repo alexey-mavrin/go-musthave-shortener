@@ -14,8 +14,8 @@ func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	requestUrl := path.Join(r.URL.String(), key)
-	http.Error(w, requestUrl, http.StatusCreated)
+	requestURL := path.Join(r.URL.String(), key)
+	http.Error(w, requestURL, http.StatusCreated)
 }
 
 func (s *storage) fetchHandler(w http.ResponseWriter, r *http.Request) {
