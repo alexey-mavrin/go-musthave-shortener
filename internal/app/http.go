@@ -15,8 +15,8 @@ func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	requestURL := serverAddress + key
-	http.Error(w, requestURL, http.StatusCreated)
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(serverAddress + key))
 }
 
 func (s *storage) fetchHandler(w http.ResponseWriter, r *http.Request) {
