@@ -3,6 +3,7 @@ package app
 import (
 	"log"
 	"net/http"
+	"path"
 )
 
 func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,8 +14,8 @@ func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	requestUrl := r.URL.JoinPath(key)
-	http.Error(w, requestUrl.String(), http.StatusCreated)
+	requestUrl := path.Join(r.URL.String(), key)
+	http.Error(w, requestUrl, http.StatusCreated)
 }
 
 func (s *storage) fetchHandler(w http.ResponseWriter, r *http.Request) {
