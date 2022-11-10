@@ -1,6 +1,7 @@
 package app
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -8,7 +9,12 @@ import (
 const serverAddress = `http://localhost:8080/`
 
 func (s *storage) storeHandler(w http.ResponseWriter, r *http.Request) {
-	url := r.FormValue("url")
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	url := string(body)
 	log.Print("url:", url)
 	key, err := s.store(url)
 	if err != nil {
