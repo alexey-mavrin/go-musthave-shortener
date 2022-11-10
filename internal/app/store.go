@@ -37,7 +37,7 @@ func (s *storage) store(url string) (string, error) {
 	}
 
 	if key == "" {
-		return "", errors.New("Cannot generate storage key")
+		return "", errors.New("cannot generate storage key")
 	}
 
 	s.s[key] = url
