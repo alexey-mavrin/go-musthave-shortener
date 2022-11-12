@@ -46,6 +46,7 @@ func Test_storeHandler_dispatchHandler(t *testing.T) {
 		require.NoError(t, err)
 		defer getRes.Body.Close()
 		_, err = io.ReadAll(getRes.Body)
+		require.NoError(t, err)
 		longURL := getRes.Header.Get("Location")
 		assert.Equal(t, tt.url, longURL)
 	}
