@@ -31,22 +31,22 @@ func Test_storeHandler_dispatchHandler(t *testing.T) {
 		assert.NoError(t, err)
 		defer postRes.Body.Close()
 		body, err := io.ReadAll(postRes.Body)
-		shortUrl := string(body)
+		shortURL := string(body)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusCreated, postRes.StatusCode)
-		assert.Contains(t, shortUrl, serverAddress)
+		assert.Contains(t, shortURL, serverAddress)
 		// TODO: fix url construction
-		shortUrlPath := shortUrl[len(serverAddress):]
+		shortURLPath := shortURL[len(serverAddress):]
 
 		// do not follow redirect
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		}
-		getRes, err := client.Get(s.URL + "/" + shortUrlPath)
+		getRes, err := client.Get(s.URL + "/" + shortURLPath)
 		require.NoError(t, err)
 		defer getRes.Body.Close()
 		_, err = io.ReadAll(getRes.Body)
-		longUrl := getRes.Header.Get("Location")
-		assert.Equal(t, tt.url, longUrl)
+		longURL := getRes.Header.Get("Location")
+		assert.Equal(t, tt.url, longURL)
 	}
 }
