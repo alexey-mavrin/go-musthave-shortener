@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_storage_store(t *testing.T) {
+func Test_mapStorage_store(t *testing.T) {
 	type args struct {
 		url string
 	}
@@ -23,12 +23,12 @@ func Test_storage_store(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := newStorage()
-			k, err := s.store(tt.args.url)
+			sh := newStoreHandler()
+			k, err := sh.s.store(tt.args.url)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("storage.store() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			url, err := s.get(k)
+			url, err := sh.s.get(k)
 			if err != nil {
 				t.Errorf("get returns error %s while should not", err)
 			}

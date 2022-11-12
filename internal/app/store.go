@@ -5,7 +5,16 @@ import (
 	"sync"
 )
 
-type storage struct {
+type storeHandler struct {
+	s storage
+}
+
+type storage interface {
+	store(value string) (key string, e error)
+	get(key string) (value string, e error)
+}
+
+type mapStorage struct {
 	s  map[string]string
 	mu sync.Mutex
 }
@@ -15,14 +24,16 @@ const (
 	maxStoreAttempt = 10
 )
 
-func newStorage() *storage {
-	stor := make(map[string]string)
-	return &storage{
-		s: stor,
+func newStoreHandler() storeHandler {
+	stor := storeHandler{
+		s: storage(&mapStorage{
+			s: make(map[string]string),
+		}),
 	}
+	return stor
 }
 
-func (s *storage) store(url string) (string, error) {
+func (s *mapStorage) store(url string) (string, error) {
 	var key string
 
 	s.mu.Lock()
@@ -44,7 +55,7 @@ func (s *storage) store(url string) (string, error) {
 	return key, nil
 }
 
-func (s *storage) get(key string) (string, error) {
+func (s *mapStorage) get(key string) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	url, ok := s.s[key]
