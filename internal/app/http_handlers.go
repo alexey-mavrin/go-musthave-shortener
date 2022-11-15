@@ -4,11 +4,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 const serverAddress = `http://localhost:8080/`
 
-func (sh storeHandler) storeHandler(w http.ResponseWriter, r *http.Request) {
+func (sh store) storeHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -25,8 +27,8 @@ func (sh storeHandler) storeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(serverAddress + key))
 }
 
-func (sh storeHandler) fetchHandler(w http.ResponseWriter, r *http.Request) {
-	key := r.URL.EscapedPath()[1:]
+func (sh store) fetchHandler(w http.ResponseWriter, r *http.Request) {
+	key := chi.URLParam(r, "key")
 	log.Print("key:", key)
 	url, err := sh.s.get(key)
 	if err != nil {
