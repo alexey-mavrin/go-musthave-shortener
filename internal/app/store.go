@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-type storeHandler struct {
+type store struct {
 	s storage
 }
 
@@ -24,8 +24,8 @@ const (
 	maxStoreAttempt = 10
 )
 
-func newStoreHandler() storeHandler {
-	stor := storeHandler{
+func newStore() store {
+	stor := store{
 		s: storage(&mapStorage{
 			s: make(map[string]string),
 		}),

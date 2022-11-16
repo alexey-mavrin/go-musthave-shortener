@@ -2,19 +2,27 @@ package app
 
 import (
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (sh storeHandler) dispatchHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		sh.fetchHandler(w, r)
-	case http.MethodPost:
-		sh.storeHandler(w, r)
-	}
+func newServer(sh *store) *chi.Mux {
+
+	r := chi.NewRouter()
+
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+
+	r.Get("/{key}", sh.fetchHandler)
+	r.Post("/", sh.storeHandler)
+
+	return r
 }
 
 func Run() error {
-	sh := newStoreHandler()
-	http.HandleFunc("/", sh.dispatchHandler)
-	return http.ListenAndServe(":8080", nil)
+	sh := newStore()
+	r := newServer(&sh)
+	return http.ListenAndServe(":8080", r)
 }

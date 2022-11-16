@@ -23,7 +23,7 @@ func Test_mapStorage_store(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStoreHandler()
+			sh := newStore()
 			k, err := sh.s.store(tt.args.url)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("storage.store() error = %v, wantErr %v", err, tt.wantErr)

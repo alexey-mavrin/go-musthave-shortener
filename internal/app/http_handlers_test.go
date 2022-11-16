@@ -22,7 +22,7 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStoreHandler()
+			sh := newStore()
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
 				"/", strings.NewReader(tt.url))
@@ -51,17 +51,28 @@ func Test_storeHandler_fetchHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStoreHandler()
+			sh := newStore()
 			key, err := sh.s.store(tt.url)
 			assert.NoError(t, err)
-			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodGet, "/"+key, nil)
-			sh.fetchHandler(w, r)
-			res := w.Result()
+
+			r := newServer(&sh)
+			ts := httptest.NewServer(r)
+			defer ts.Close()
+
+			req, err := http.NewRequest(http.MethodGet, ts.URL+"/"+key, nil)
+			assert.NoError(t, err)
+			client := &http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+					return http.ErrUseLastResponse
+				},
+			}
+			res, err := client.Do(req)
+			assert.NoError(t, err)
+
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
 			assert.NoError(t, err)
-			assert.Equal(t, http.StatusTemporaryRedirect, w.Code)
+			assert.Equal(t, http.StatusTemporaryRedirect, res.StatusCode)
 			assert.Contains(t, string(body),
 				`<a href="`+tt.url+`">Temporary Redirect</a>.`)
 		})
