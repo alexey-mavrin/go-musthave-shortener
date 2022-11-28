@@ -17,6 +17,7 @@ func newServer(sh *store) *chi.Mux {
 
 	r.Get("/{key}", sh.fetchHandler)
 	r.Post("/", sh.storeHandler)
+	r.Post("/api/shorten", sh.storeJSONHandler)
 
 	return r
 }
