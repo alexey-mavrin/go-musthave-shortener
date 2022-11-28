@@ -29,10 +29,11 @@ func (sh store) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
 	res := Result{
 		Result: serverAddress + key,
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	enc := json.NewEncoder(w)
 	err = enc.Encode(res)
 	if err != nil {
