@@ -23,11 +23,12 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStore()
+			c := Config{}
+			c.sh = newStore()
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
 				"/", strings.NewReader(tt.url))
-			sh.storeHandler(w, r)
+			c.storeHandler(w, r)
 			res := w.Result()
 			defer res.Body.Close()
 			body, err := io.ReadAll(res.Body)
@@ -52,11 +53,12 @@ func Test_storeJSONHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStore()
+			c := Config{}
+			c.sh = newStore()
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
 				"/api/shorten", strings.NewReader(tt.body))
-			sh.storeJSONHandler(w, r)
+			c.storeJSONHandler(w, r)
 			res := w.Result()
 			defer res.Body.Close()
 
@@ -87,11 +89,12 @@ func Test_storeHandler_fetchHandler(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sh := newStore()
-			key, err := sh.s.store(tt.url)
+			c := Config{}
+			c.sh = newStore()
+			key, err := c.sh.s.store(tt.url)
 			assert.NoError(t, err)
 
-			r := newServer(&sh)
+			r := newServer(c)
 			ts := httptest.NewServer(r)
 			defer ts.Close()
 

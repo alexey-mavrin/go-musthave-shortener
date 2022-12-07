@@ -44,8 +44,9 @@ func Test_newServer(t *testing.T) {
 		},
 	}
 
-	sh := newStore()
-	r := newServer(&sh)
+	c := Config{}
+	c.sh = newStore()
+	r := newServer(c)
 	srv := httptest.NewServer(r)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

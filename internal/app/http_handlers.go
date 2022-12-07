@@ -11,7 +11,7 @@ import (
 
 const serverAddress = `http://localhost:8080/`
 
-func (sh store) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
+func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -24,7 +24,7 @@ func (sh store) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Print("url:", url.URL)
-	key, err := sh.s.store(url.URL)
+	key, err := c.sh.s.store(url.URL)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -42,7 +42,7 @@ func (sh store) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (sh store) storeHandler(w http.ResponseWriter, r *http.Request) {
+func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (sh store) storeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	url := string(body)
 	log.Print("url:", url)
-	key, err := sh.s.store(url)
+	key, err := c.sh.s.store(url)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -59,10 +59,10 @@ func (sh store) storeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(serverAddress + key))
 }
 
-func (sh store) fetchHandler(w http.ResponseWriter, r *http.Request) {
+func (c Config) fetchHandler(w http.ResponseWriter, r *http.Request) {
 	key := chi.URLParam(r, "key")
 	log.Print("key:", key)
-	url, err := sh.s.get(key)
+	url, err := c.sh.s.get(key)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

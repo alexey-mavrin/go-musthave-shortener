@@ -7,3 +7,9 @@ type URL struct {
 type Result struct {
 	Result string `json:"result"`
 }
+
+type Config struct {
+	ServerAddress string
+	BaseURL       string
+	sh            store
+}
