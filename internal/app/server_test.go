@@ -44,7 +44,9 @@ func Test_newServer(t *testing.T) {
 		},
 	}
 
-	c := Config{}
+	c := Config{
+		BaseURL: "http://localhost:8080/",
+	}
 	c.sh = newStore()
 	r := newServer(c)
 	srv := httptest.NewServer(r)

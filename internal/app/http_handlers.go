@@ -9,8 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-const serverAddress = `http://localhost:8080/`
-
 func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -30,7 +28,7 @@ func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := Result{
-		Result: serverAddress + key,
+		Result: c.BaseURL + key,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -56,7 +54,7 @@ func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(serverAddress + key))
+	w.Write([]byte(c.BaseURL + key))
 }
 
 func (c Config) fetchHandler(w http.ResponseWriter, r *http.Request) {

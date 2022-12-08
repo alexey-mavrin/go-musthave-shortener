@@ -13,17 +13,21 @@ import (
 
 func Test_storeHandler_storeHandler(t *testing.T) {
 	tests := []struct {
-		name string
-		url  string
+		name    string
+		url     string
+		baseurl string
 	}{
 		{
-			name: "simple url",
-			url:  "http://www.kiae.su/",
+			name:    "simple url",
+			url:     "http://www.kiae.su/",
+			baseurl: "http://ser.ver/",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := Config{}
+			c := Config{
+				BaseURL: tt.baseurl,
+			}
 			c.sh = newStore()
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
@@ -34,26 +38,30 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 			body, err := io.ReadAll(res.Body)
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusCreated, w.Code)
-			assert.True(t, strings.HasPrefix(string(body), serverAddress),
+			assert.True(t, strings.HasPrefix(string(body), c.BaseURL),
 				"response contains server address")
-			assert.Greater(t, len(string(body)), len(serverAddress))
+			assert.Greater(t, len(string(body)), len(c.BaseURL))
 		})
 	}
 }
 
 func Test_storeJSONHandler(t *testing.T) {
 	tests := []struct {
-		name string
-		body string
+		name    string
+		body    string
+		baseurl string
 	}{
 		{
-			name: "simple url",
-			body: `{"url":"http://www.kiae.su"}`,
+			name:    "simple url",
+			body:    `{"url":"http://www.kiae.su"}`,
+			baseurl: "http://ser.ver/",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := Config{}
+			c := Config{
+				BaseURL: tt.baseurl,
+			}
 			c.sh = newStore()
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
@@ -70,26 +78,30 @@ func Test_storeJSONHandler(t *testing.T) {
 			err = json.Unmarshal(body, short)
 			assert.NoError(t, err)
 			assert.NotEqual(t, "", short.Result)
-			assert.True(t, strings.HasPrefix(short.Result, serverAddress),
+			assert.True(t, strings.HasPrefix(short.Result, c.BaseURL),
 				"response contains server address")
-			assert.Greater(t, len(short.Result), len(serverAddress))
+			assert.Greater(t, len(short.Result), len(c.BaseURL))
 			assert.Equal(t, w.Header().Get("Content-Type"), "application/json")
 		})
 	}
 }
 func Test_storeHandler_fetchHandler(t *testing.T) {
 	tests := []struct {
-		name string
-		url  string
+		name    string
+		url     string
+		baseurl string
 	}{
 		{
-			name: "simple url",
-			url:  "http://www.kiae.su",
+			name:    "simple url",
+			url:     "http://www.kiae.su",
+			baseurl: "http://ser.ver/",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := Config{}
+			c := Config{
+				BaseURL: tt.baseurl,
+			}
 			c.sh = newStore()
 			key, err := c.sh.s.store(tt.url)
 			assert.NoError(t, err)
