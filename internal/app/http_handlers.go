@@ -28,7 +28,7 @@ func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	res := Result{
-		Result: c.BaseURL + key,
+		Result: c.BaseURL + "/" + key,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -54,7 +54,7 @@ func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(c.BaseURL + key))
+	w.Write([]byte(c.BaseURL + "/" + key))
 }
 
 func (c Config) fetchHandler(w http.ResponseWriter, r *http.Request) {

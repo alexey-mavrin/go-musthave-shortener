@@ -20,7 +20,7 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 		{
 			name:    "simple url",
 			url:     "http://www.kiae.su/",
-			baseurl: "http://ser.ver/",
+			baseurl: "http://ser.ver",
 		},
 	}
 	for _, tt := range tests {
@@ -54,7 +54,7 @@ func Test_storeJSONHandler(t *testing.T) {
 		{
 			name:    "simple url",
 			body:    `{"url":"http://www.kiae.su"}`,
-			baseurl: "http://ser.ver/",
+			baseurl: "http://ser.ver",
 		},
 	}
 	for _, tt := range tests {
@@ -94,7 +94,7 @@ func Test_storeHandler_fetchHandler(t *testing.T) {
 		{
 			name:    "simple url",
 			url:     "http://www.kiae.su",
-			baseurl: "http://ser.ver/",
+			baseurl: "http://ser.ver",
 		},
 	}
 	for _, tt := range tests {
