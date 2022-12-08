@@ -10,7 +10,7 @@ import (
 func main() {
 	c := app.Config{
 		ServerAddress: ":8080",
-		BaseURL:       "http://localhost:8080/",
+		BaseURL:       "http://localhost:8080",
 	}
 
 	if sa, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
