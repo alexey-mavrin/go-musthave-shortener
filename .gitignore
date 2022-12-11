@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+*.swp
 
 # Test binary, built with `go test -c`
 *.test
@@ -14,6 +15,9 @@
 # Binaries
 cmd/shortener/main
 cmd/shortener/shortener
+
+# Temp file
+tempfile
 
 # Dependency directories (remove the comment below to include it)
 vendor/
