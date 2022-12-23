@@ -28,7 +28,7 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 			c := Config{
 				BaseURL: tt.baseurl,
 			}
-			c.sh = newStore()
+			c.sh = newStoreWithFile("tempfile")
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
 				"/", strings.NewReader(tt.url))
@@ -62,7 +62,7 @@ func Test_storeJSONHandler(t *testing.T) {
 			c := Config{
 				BaseURL: tt.baseurl,
 			}
-			c.sh = newStore()
+			c.sh = newStoreWithFile("tempfile")
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodPost,
 				"/api/shorten", strings.NewReader(tt.body))
@@ -102,7 +102,7 @@ func Test_storeHandler_fetchHandler(t *testing.T) {
 			c := Config{
 				BaseURL: tt.baseurl,
 			}
-			c.sh = newStore()
+			c.sh = newStoreWithFile("tempfile")
 			key, err := c.sh.s.store(tt.url)
 			assert.NoError(t, err)
 

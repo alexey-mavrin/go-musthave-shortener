@@ -31,7 +31,7 @@ func Run() error {
 }
 
 func (c Config) Run() error {
-	c.sh = newStore()
+	c.sh = newStoreWithFile(c.FileStoragePath)
 	r := newServer(c)
 	return http.ListenAndServe(c.ServerAddress, r)
 }

@@ -46,11 +46,6 @@ func newStoreWithFile(path string) store {
 	return stor
 }
 
-func newStore() store {
-	filename := os.Getenv("FILE_STORAGE_PATH")
-	return newStoreWithFile(filename)
-}
-
 func (s *mapStorage) error() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
