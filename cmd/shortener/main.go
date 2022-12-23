@@ -20,25 +20,25 @@ func parseConfig() app.Config {
 	stFlag := flag.String("f", "", "storage file")
 	flag.Parse()
 
-	if saEnv, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
-		c.ServerAddress = saEnv
-	}
 	if saFlag != nil {
 		c.ServerAddress = *saFlag
 	}
-
-	if buEnv, ok := os.LookupEnv("BASE_URL"); ok {
-		c.BaseURL = buEnv
+	if saEnv, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
+		c.ServerAddress = saEnv
 	}
+
 	if buFlag != nil {
 		c.BaseURL = *buFlag
 	}
-
-	if stEnv, ok := os.LookupEnv("FILE_STORAGE_PATH"); ok {
-		c.FileStoragePath = stEnv
+	if buEnv, ok := os.LookupEnv("BASE_URL"); ok {
+		c.BaseURL = buEnv
 	}
+
 	if stFlag != nil {
 		c.FileStoragePath = *stFlag
+	}
+	if stEnv, ok := os.LookupEnv("FILE_STORAGE_PATH"); ok {
+		c.FileStoragePath = stEnv
 	}
 
 	conf, _ := json.Marshal(c)
