@@ -1,6 +1,7 @@
 package app
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -39,6 +40,41 @@ func Test_storeHandler_storeHandler(t *testing.T) {
 	}
 }
 
+func Test_storeJSONHandler(t *testing.T) {
+	tests := []struct {
+		name string
+		body string
+	}{
+		{
+			name: "simple url",
+			body: `{"url":"http://www.kiae.su"}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sh := newStore()
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodPost,
+				"/api/shorten", strings.NewReader(tt.body))
+			sh.storeJSONHandler(w, r)
+			res := w.Result()
+			defer res.Body.Close()
+
+			assert.Equal(t, http.StatusCreated, w.Code)
+
+			body, err := io.ReadAll(res.Body)
+			assert.NoError(t, err)
+			short := new(Result)
+			err = json.Unmarshal(body, short)
+			assert.NoError(t, err)
+			assert.NotEqual(t, "", short.Result)
+			assert.True(t, strings.HasPrefix(short.Result, serverAddress),
+				"response contains server address")
+			assert.Greater(t, len(short.Result), len(serverAddress))
+			assert.Equal(t, w.Header().Get("Content-Type"), "application/json")
+		})
+	}
+}
 func Test_storeHandler_fetchHandler(t *testing.T) {
 	tests := []struct {
 		name string
