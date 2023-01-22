@@ -11,6 +11,7 @@ func newServer(c Config) *chi.Mux {
 
 	r := chi.NewRouter()
 
+	r.Use(middleware.Compress(5))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
