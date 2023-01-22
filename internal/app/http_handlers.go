@@ -4,7 +4,6 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -12,12 +11,33 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+func optionalDecompressBody(r *http.Request) ([]byte, error) {
+	if !strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			return []byte{}, err
+		}
+		return body, nil
+	}
+	gz, err := gzip.NewReader(r.Body)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer gz.Close()
+	body, err := io.ReadAll(gz)
+	if err != nil {
+		return []byte{}, err
+	}
+	return body, nil
+}
+
 func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := optionalDecompressBody(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
 	url := new(URL)
 	err = json.Unmarshal(body, url)
 	if err != nil {
@@ -44,27 +64,13 @@ func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
-	var body []byte
-	var err error
-
-	if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
-		gz, err := gzip.NewReader(r.Body)
-		if err != nil {
-			http.Error(w, "NewReader "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer gz.Close()
-		defer r.Body.Close()
-
-		body, err = io.ReadAll(gz)
-	} else {
-		body, err = ioutil.ReadAll(r.Body)
-	}
-
+	body, err := optionalDecompressBody(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	defer r.Body.Close()
+
 	url := string(body)
 	log.Print("url:", url)
 	key, err := c.sh.s.store(url)
