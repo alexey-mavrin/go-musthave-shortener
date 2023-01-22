@@ -53,6 +53,7 @@ func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(c.BaseURL + "/" + key))
 }
@@ -65,5 +66,6 @@ func (c Config) fetchHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "text/html")
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }

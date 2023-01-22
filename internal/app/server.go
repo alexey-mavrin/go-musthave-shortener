@@ -14,6 +14,7 @@ func newServer(c Config) *chi.Mux {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
+	r.Use(middleware.Compress(5))
 
 	r.Get("/{key}", c.fetchHandler)
 	r.Post("/", c.storeHandler)
