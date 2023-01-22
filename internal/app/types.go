@@ -9,7 +9,8 @@ type Result struct {
 }
 
 type Config struct {
-	ServerAddress string
-	BaseURL       string
-	sh            store
+	ServerAddress   string
+	BaseURL         string
+	FileStoragePath string
+	sh              store
 }
