@@ -1,10 +1,13 @@
 package app
 
 import (
+	"compress/gzip"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -41,7 +44,23 @@ func (c Config) storeJSONHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c Config) storeHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	var body []byte
+	var err error
+
+	if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+		gz, err := gzip.NewReader(r.Body)
+		if err != nil {
+			http.Error(w, "NewReader "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer gz.Close()
+		defer r.Body.Close()
+
+		body, err = io.ReadAll(gz)
+	} else {
+		body, err = ioutil.ReadAll(r.Body)
+	}
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

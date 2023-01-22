@@ -20,13 +20,14 @@ func main() {
 	var endpoint string
 
 	var useJSON = flag.Bool("json", false, "use JSON request")
+	var useGzip = flag.Bool("gzip", false, "use Gzip compression")
 	flag.Parse()
 	fmt.Println(*useJSON)
 
 	fmt.Println("Введите длинный URL")
 	reader := bufio.NewReader(os.Stdin)
 	long, err := reader.ReadString('\n')
-	if err != nil {
+	if err != nil && err != io.EOF {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -58,6 +59,9 @@ func main() {
 	// в заголовках запроса сообщаем, что данные кодированы стандартной URL-схемой
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Add("Content-Length", strconv.Itoa(len(long)))
+	if *useGzip {
+		request.Header.Add("Content-Encoding", "gzip")
+	}
 	// отправляем запрос и получаем ответ
 	response, err := client.Do(request)
 	if err != nil {
