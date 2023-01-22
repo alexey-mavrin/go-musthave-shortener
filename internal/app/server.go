@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func newServer(sh *store) *chi.Mux {
+func newServer(c Config) *chi.Mux {
 
 	r := chi.NewRouter()
 
@@ -15,15 +15,23 @@ func newServer(sh *store) *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 
-	r.Get("/{key}", sh.fetchHandler)
-	r.Post("/", sh.storeHandler)
-	r.Post("/api/shorten", sh.storeJSONHandler)
+	r.Get("/{key}", c.fetchHandler)
+	r.Post("/", c.storeHandler)
+	r.Post("/api/shorten", c.storeJSONHandler)
 
 	return r
 }
 
 func Run() error {
-	sh := newStore()
-	r := newServer(&sh)
-	return http.ListenAndServe(":8080", r)
+	c := Config{
+		ServerAddress: ":8080",
+		BaseURL:       "http://localhost:8080/",
+	}
+	return c.Run()
+}
+
+func (c Config) Run() error {
+	c.sh = newStore()
+	r := newServer(c)
+	return http.ListenAndServe(c.ServerAddress, r)
 }
